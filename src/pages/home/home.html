@@ -1,3 +1,3 @@
 <ion-content>
-  <mbsc-eventcalendar [data]="events" [options]="eventSettings"></mbsc-eventcalendar>
+  <mbsc-eventcalendar [data]="events" [options]="eventSettings" (onEventSelect)="eventClick($event)"></mbsc-eventcalendar>
 </ion-content>
