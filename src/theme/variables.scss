@@ -86,3 +86,6 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+
+$mbsc-font-path: '../lib/mobiscroll/css/';
+@import "../../node_modules/@mobiscroll/angular/dist/css/mobiscroll.scss";

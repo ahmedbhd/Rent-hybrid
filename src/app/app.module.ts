@@ -11,6 +11,10 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 
+import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MbscModule } from '@mobiscroll/angular';
+
 @NgModule({
   declarations: [
     MyApp,
@@ -19,8 +23,15 @@ import { SplashScreen } from '@ionic-native/splash-screen';
     HomePage,
     TabsPage
   ],
-  imports: [
+  imports: [ 
+    FormsModule,  
+    MbscModule, 
     BrowserModule,
+    MbscModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    HttpClientJsonpModule,
     IonicModule.forRoot(MyApp)
   ],
   bootstrap: [IonicApp],
