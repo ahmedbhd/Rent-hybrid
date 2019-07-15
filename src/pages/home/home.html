@@ -1,6 +1,26 @@
 <ion-content>
   <ion-fab right bottom>
-    <button color="dark" icon-only ion-fab mini><i class="fas fa-plus-circle"></i></button>
+    <button color="dark" icon-only ion-fab (click)="mbscPopup.instance.show()"><i class="fas fa-plus-circle"></i></button>
   </ion-fab>
   <mbsc-eventcalendar [data]="events" [options]="eventSettings" (onEventSelect)="eventClick($event)"></mbsc-eventcalendar>
+
+  <mbsc-popup [options]="popupSettings" #mbscPopup="mobiscroll" class="md-add-event-popup">
+    <mbsc-form>
+      <mbsc-form-group>
+        <mbsc-input [(ngModel)]="eventText">Title</mbsc-input>
+        <mbsc-textarea [(ngModel)]="eventDesc">Description</mbsc-textarea>
+      </mbsc-form-group>
+      <mbsc-form-group>
+        <mbsc-switch [(ngModel)]="allDay" (change)="change()">All-day</mbsc-switch>
+        <mbsc-range [(ngModel)]="eventDate" [options]="rangeSettings" [controls]="control" [dateWheels]="wheels">
+          <mbsc-range-start>Starts</mbsc-range-start>
+          <mbsc-range-end>Ends</mbsc-range-end>
+        </mbsc-range>
+        <mbsc-segmented-group name="my-group" [(ngModel)]="isFree">
+          <mbsc-segmented value="busy">Show as busy</mbsc-segmented>
+          <mbsc-segmented value="free">Show as free</mbsc-segmented>
+        </mbsc-segmented-group>
+      </mbsc-form-group>
+    </mbsc-form>
+  </mbsc-popup>
 </ion-content>
