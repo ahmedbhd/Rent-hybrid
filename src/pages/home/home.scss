@@ -1,4 +1,48 @@
 page-home {
 
+  .md-add-event-demo {
+    position: absolute;
+    height: 100%;
+  }
 
+  .md-add-event-demo .mbsc-row {
+    height: 100%;
+  }
+
+  .md-add-event-demo .md-col-right {
+    overflow: auto;
+    height: 100%;
+    border-left: 1px solid #ccc;
+  }
+
+  .md-add-event-demo .md-delete-btn {
+    margin: 0;
+    position: absolute;
+    right: 10px;
+    top: 8px;
+    z-index: 1;
+    transition: background-color .3s ease-out;
+  }
+
+  .mbsc-material .md-add-event-demo .md-delete-btn {
+    top: 6px;
+  }
+
+  .mbsc-windows .md-add-event-demo .md-delete-btn {
+    top: 10px;
+  }
+
+  .md-add-event-demo .md-delete-btn.mbsc-btn-outline.mbsc-btn:not(:disabled):not(.mbsc-active):hover:hover {
+    background: #f5504e;
+    color: #fff;
+  }
+
+  .mbsc-rtl .md-add-event-demo .md-delete-btn {
+    right: auto;
+    left: 10px;
+  }
+
+  .md-add-event-popup {
+    max-width: 400px;
+  }
 }

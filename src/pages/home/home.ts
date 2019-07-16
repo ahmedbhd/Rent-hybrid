@@ -5,12 +5,14 @@ import {HttpClient} from '@angular/common/http';
 
 const now = new Date();
 let id = 5;
+let eventToEdit;
 
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
+  constructor(public navCtrl: NavController, private http: HttpClient) {  }
 
   eventDate = [now, new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 2)];
   events: any;
@@ -23,6 +25,10 @@ export class HomePage {
   control: Array < string > ;
   wheels: string;
 
+  btn = '<button class="mbsc-btn mbsc-btn-outline mbsc-btn-primary md-edit-btn">Edit</button>';
+  eventStart: Date;
+  eventEnd: Date;
+  eventColor: string;
 
   change() {
     this.control = this.allDay ? ['date'] : ['date', 'time'];
@@ -34,6 +40,7 @@ export class HomePage {
     dateWheels: '|D M d|',
     startInput: '#startDate',
     endInput: '#endDate',
+    lang:'fr',
     tabs: false,
     responsive: {
       large: {
@@ -52,6 +59,8 @@ export class HomePage {
     },
       'cancel'
     ],
+
+
     headerText: 'Ajouter une location',
     onSet: (event, inst) => {
       this.events.push({
@@ -90,9 +99,7 @@ export class HomePage {
     }
   };
 
-  constructor(public navCtrl: NavController, private http: HttpClient) {
 
-  }
 
   ngOnInit() {
     this.http.jsonp('https://trial.mobiscroll.com/events/', 'callback').subscribe((resp: any) => {
@@ -110,5 +117,46 @@ export class HomePage {
       message: 'Add button clicked!',
       color: 'success'
     });
+  }
+
+
+  // update
+  updatePopup() {
+    const event = eventToEdit,
+      free = event.free ? 'free' : 'busy',
+      oneDay = 1000 * 60 * 60 * 24,
+      diff = new Date(event.end).getTime() - new Date(event.start).getTime(),
+      days = Math.round(Math.abs(diff) / oneDay),
+      allDay = event.allDay || days > 0;
+
+    this.eventText = event.text.replace(this.btn, '') || '';
+    this.eventDesc = event.desc || '';
+    this.allDay = allDay;
+
+    setTimeout(() => {
+      this.eventStart = event.start;
+      this.eventEnd = event.end;
+    });
+
+    this.isFree = free;
+    this.eventColor = event.color;
+
+    this.change();
+  }
+
+  saveChanges() {
+    const eventToSave = {
+        id: eventToEdit.id,
+        text: this.eventText + this.btn,
+        desc: this.eventDesc,
+        color: this.eventColor,
+        allDay: this.allDay,
+        start: this.eventStart,
+        end: this.eventEnd,
+        free: this.isFree === 'free'
+      },
+      index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
+
+    this.events[index] = eventToSave;
   }
 }
