@@ -12,6 +12,10 @@ import {
 } from '@mobiscroll/angular';
 import { HttpClient } from '@angular/common/http';
 
+import * as firebase from 'firebase';
+import { snapshotToArray} from "../../app/environment";
+
+
 mobiscroll.settings = {
   lang: 'fr',
   theme: 'material'
@@ -26,8 +30,14 @@ const now = new Date();
   selector: 'page-home',
   templateUrl: './home.html'
 })
-export class HomePage implements OnInit {
-  constructor(private http: HttpClient) {}
+export class HomePage {
+  refLocation = firebase.database().ref('location/');
+  refPayment = firebase.database().ref('payment/');
+
+
+  constructor(private http: HttpClient) {
+
+  }
 
   events: Array < any > ;
   eventText: string;
@@ -82,16 +92,23 @@ export class HomePage implements OnInit {
         tel: this.eventDesc,
         name: this.eventName,
       };
+        let newLocation = this.refLocation.push();
+        newLocation.set(entity);
+
+
       console.log('entityLoan');
       console.log(entity);
 
       let paymentEntity = {
+        id:id,
         type: this.paymentType,
         amount: this.eventAmount,
         date: new Date()
       };
       console.log('entityPayment');
       console.log(paymentEntity);
+      let newPayment = this.refPayment.push();
+      newPayment.set(paymentEntity);
 
       this.events.push({
         id: id,
@@ -257,7 +274,7 @@ export class HomePage implements OnInit {
     // this.change();
   }
 
-  ngOnInit() {
+  ionViewDidLoad() {
     this.http.jsonp('https://trial.mobiscroll.com/events-update/', 'callback').subscribe((resp: any) => {
       for (let i = 0; i < resp.length; ++i) {
         resp[i].text += this.btn;
@@ -272,6 +289,8 @@ export class HomePage implements OnInit {
       this.events = resp;
     });
   }
+
+
   markedDays: Array < any > = [];
   paymentType: string = 'avance';
   eventName: string;
