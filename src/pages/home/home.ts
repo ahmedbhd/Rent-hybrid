@@ -85,8 +85,8 @@ export class HomePage {
 
       let entity = {
         id: id,
-        start: this.eventDate[0],
-        end: this.eventDate[1],
+        start: this.eventDate[0].getTime(),
+        end: this.eventDate[1].getTime(),
         color: this.eventColor,
         cin: this.eventText,
         tel: this.eventDesc,
@@ -103,7 +103,7 @@ export class HomePage {
         id:id,
         type: this.paymentType,
         amount: this.eventAmount,
-        date: new Date()
+        date: new Date().getTime()
       };
       console.log('entityPayment');
       console.log(paymentEntity);
@@ -260,8 +260,8 @@ export class HomePage {
       days = Math.round(Math.abs(diff) / oneDay);
       // allDay = event.allDay || days > 0;
 
-    this.eventText = event.text.replace(this.btn, '') || '';
-    this.eventDesc = event.desc || '';
+    this.eventText = event.name.replace(this.btn, '') || '';
+    this.eventDesc = event.cin || '';
     // this.allDay = allDay;
 
     setTimeout(() => {
@@ -275,16 +275,18 @@ export class HomePage {
   }
 
   ionViewDidLoad() {
-    this.http.jsonp('https://trial.mobiscroll.com/events-update/', 'callback').subscribe((resp: any) => {
+    this.refLocation.on('value', (resp:any) => {
+      resp  = snapshotToArray(resp);
       for (let i = 0; i < resp.length; ++i) {
-        resp[i].text += this.btn;
+        resp[i].name += this.btn;
         let day;
-        let startDay = new Date(resp[i].start).getTime();
-        let endDay = new Date(resp[i].end).getTime();
+        let startDay = new Date(resp[i].start);
+        let endDay = new Date(resp[i].end);
         for (day = startDay; day <= endDay; day += 86400000) {
           let loopDay=new Date(day);
           this.markedDays.push({d: loopDay,color: resp[i].color})
         }
+        console.log(resp[i])
       }
       this.events = resp;
     });
