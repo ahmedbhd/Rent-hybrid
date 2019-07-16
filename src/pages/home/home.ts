@@ -1,6 +1,15 @@
 import { Component } from '@angular/core';
 import { ViewChild, OnInit } from '@angular/core';
-import { mobiscroll, MbscEventcalendarOptions, MbscRangeOptions, MbscPopupOptions, MbscColorOptions, MbscEventcalendar, MbscPopup } from '@mobiscroll/angular';
+import {
+  mobiscroll,
+  MbscEventcalendarOptions,
+  MbscRangeOptions,
+  MbscPopupOptions,
+  MbscColorOptions,
+  MbscEventcalendar,
+  MbscPopup,
+  MbscNumberOptions, MbscNumpadDecimalOptions, MbscNumpadOptions
+} from '@mobiscroll/angular';
 import { HttpClient } from '@angular/common/http';
 
 mobiscroll.settings = {
@@ -23,14 +32,22 @@ export class HomePage implements OnInit {
   events: Array < any > ;
   eventText: string;
   eventDesc: string;
-  allDay: boolean;
+  eventAmount: number = 0;
+
+  numpadSettings: MbscNumpadDecimalOptions = {
+    theme: 'material',
+    lang: 'fr',
+    scale: 0,
+    max: 9999
+  };
+
+  // allDay: boolean;
   eventStart: Date;
   eventEnd: Date;
-  isFree: string;
   eventColor: string;
   btn = '<button class="mbsc-btn mbsc-btn-primary md-edit-btn">Modifier</button>';
-  controlType: Array < string > ;
-  wheelType: string;
+  controlType: Array < string > = ['date', 'time'] ;
+  wheelType: string = '|D M d|';
 
   @ViewChild('mbscCal')
   cal: MbscEventcalendar;
@@ -47,24 +64,44 @@ export class HomePage implements OnInit {
     display: 'center',
     cssClass: 'mbsc-no-padding',
     buttons: [{
-      text: 'Add event',
+      text: 'Ajouter',
       handler: 'set'
     },
       'cancel'
     ],
-    headerText: 'Add new event',
+    headerText: 'Ajouter Location',
     onSet: (event, inst) => {
       let id = 5;
+
+      let entity = {
+        id: id,
+        start: this.eventDate[0],
+        end: this.eventDate[1],
+        color: this.eventColor,
+        cin: this.eventText,
+        tel: this.eventDesc,
+        name: this.eventName,
+      };
+      console.log('entityLoan');
+      console.log(entity);
+
+      let paymentEntity = {
+        type: this.paymentType,
+        amount: this.eventAmount,
+        date: new Date()
+      };
+      console.log('entityPayment');
+      console.log(paymentEntity);
+
       this.events.push({
         id: id,
         start: this.eventDate[0],
         end: this.eventDate[1],
         color: this.eventColor,
-        text: (this.eventText || 'New Event') + this.btn,
-        title: this.eventText || 'New Event',
+        text: (this.eventText || 'Nouvelle location') + this.btn,
+        title: this.eventText || 'Nouvelle location',
         description: this.eventDesc,
-        allDay: this.allDay,
-        free: this.isFree === 'free'
+        name: this.eventName,
       });
       this.eventText = '';
       this.eventDesc = '';
@@ -79,6 +116,8 @@ export class HomePage implements OnInit {
         let loopDay=new Date(day);
         this.markedDays.push({d: loopDay,color: this.eventColor})
       }
+
+
     }
   };
 
@@ -154,10 +193,10 @@ export class HomePage implements OnInit {
     }
   }
 
-  change() {
-    this.controlType = this.allDay ? ['date'] : ['date', 'time'];
-    this.wheelType = this.allDay ? 'MM dd yy' : '|D M d|';
-  }
+  // change() {
+    // this.controlType = this.allDay ? ['date'] : ['date', 'time'];
+    // this.wheelType = this.allDay ? 'MM dd yy' : '|D M d|';
+  // }
 
   eventToBeEdited: any;
 
@@ -167,10 +206,8 @@ export class HomePage implements OnInit {
         text: this.eventText + this.btn,
         desc: this.eventDesc,
         color: this.eventColor,
-        allDay: this.allDay,
         start: this.eventStart,
         end: this.eventEnd,
-        free: this.isFree === 'free'
       },
       index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
     this.events[index] = eventToSave;
@@ -203,22 +240,21 @@ export class HomePage implements OnInit {
       free = event.free ? 'free' : 'busy',
       oneDay = 1000 * 60 * 60 * 24,
       diff = new Date(event.end).getTime() - new Date(event.start).getTime(),
-      days = Math.round(Math.abs(diff) / oneDay),
-      allDay = event.allDay || days > 0;
+      days = Math.round(Math.abs(diff) / oneDay);
+      // allDay = event.allDay || days > 0;
 
     this.eventText = event.text.replace(this.btn, '') || '';
     this.eventDesc = event.desc || '';
-    this.allDay = allDay;
+    // this.allDay = allDay;
 
     setTimeout(() => {
       this.eventStart = event.start;
       this.eventEnd = event.end;
     });
 
-    this.isFree = free;
     this.eventColor = event.color;
 
-    this.change();
+    // this.change();
   }
 
   ngOnInit() {
@@ -237,4 +273,6 @@ export class HomePage implements OnInit {
     });
   }
   markedDays: Array < any > = [];
+  paymentType: string = 'avance';
+  eventName: string;
 }
