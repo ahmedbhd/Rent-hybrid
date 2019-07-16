@@ -12,10 +12,10 @@ let preventSet,
   eventToEdit;
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+  selector: 'page-about',
+  templateUrl: './about.html'
 })
-export class AppComponent implements OnInit {
+export class AboutPage implements OnInit {
   constructor(private http: HttpClient) {}
 
   events: Array < any > ;

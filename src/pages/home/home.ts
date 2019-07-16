@@ -11,6 +11,8 @@ mobiscroll.settings = {
 let preventSet,
   eventToEdit;
 
+const now = new Date();
+
 @Component({
   selector: 'page-home',
   templateUrl: './home.html'
@@ -26,7 +28,7 @@ export class HomePage implements OnInit {
   eventEnd: Date;
   isFree: string;
   eventColor: string;
-  btn = '<button class="mbsc-btn mbsc-btn-outline mbsc-btn-primary md-edit-btn">Edit</button>';
+  btn = '<button class="mbsc-btn mbsc-btn-primary md-edit-btn">Modifier</button>';
   controlType: Array < string > ;
   wheelType: string;
 
@@ -38,6 +40,47 @@ export class HomePage implements OnInit {
 
   @ViewChild('mbscPopup')
   popup: MbscPopup;
+
+  eventDate = [now, new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 2)];
+
+  addPopupSettings: MbscPopupOptions = {
+    display: 'center',
+    cssClass: 'mbsc-no-padding',
+    buttons: [{
+      text: 'Add event',
+      handler: 'set'
+    },
+      'cancel'
+    ],
+    headerText: 'Add new event',
+    onSet: (event, inst) => {
+      let id = 5;
+      this.events.push({
+        id: id,
+        start: this.eventDate[0],
+        end: this.eventDate[1],
+        color: this.eventColor,
+        text: (this.eventText || 'New Event') + this.btn,
+        title: this.eventText || 'New Event',
+        description: this.eventDesc,
+        allDay: this.allDay,
+        free: this.isFree === 'free'
+      });
+      this.eventText = '';
+      this.eventDesc = '';
+      id += 1;
+      // Navigate the calendar to the new event's start date
+      this.cal.instance.navigate(this.eventDate[0], true);
+
+      let day;
+      let startDay = this.eventDate[0].getTime();
+      let endDay = this.eventDate[1].getTime();
+      for (day = startDay; day <= endDay; day += 86400000) {
+        let loopDay=new Date(day);
+        this.markedDays.push({d: loopDay,color: this.eventColor})
+      }
+    }
+  };
 
   rangeSettings: MbscRangeOptions = {
     controls: ['date', 'time'],
@@ -136,7 +179,7 @@ export class HomePage implements OnInit {
     let endDate = new Date(this.eventToBeEdited.end).getTime();
     let endDate2 = eventToSave.end.getTime();
     let datetime;
-    for (datetime = startDate; datetime < endDate; datetime += 86400000) {
+    for (datetime = startDate; datetime <= endDate; datetime += 86400000) {
       let loopDay = new Date(datetime).getDate();
       this.markedDays.forEach((markedDay) => {
         if(markedDay.d.getDate() == loopDay
@@ -149,7 +192,7 @@ export class HomePage implements OnInit {
       });
     }
     console.log('daysToColor');
-    for (let datetime2 = startDate2; datetime2 < endDate2; datetime2 += 86400000) {
+    for (let datetime2 = startDate2; datetime2 <= endDate2; datetime2 += 86400000) {
       console.log(new Date(datetime2));
       this.markedDays.push({d: new Date(datetime2), color: eventToSave.color})
     }
@@ -185,7 +228,7 @@ export class HomePage implements OnInit {
         let day;
         let startDay = new Date(resp[i].start).getTime();
         let endDay = new Date(resp[i].end).getTime();
-        for (day = startDay; day < endDay; day += 86400000) {
+        for (day = startDay; day <= endDay; day += 86400000) {
           let loopDay=new Date(day);
           this.markedDays.push({d: loopDay,color: resp[i].color})
         }
