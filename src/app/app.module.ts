@@ -15,6 +15,8 @@ import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MbscModule } from '@mobiscroll/angular';
 
+
+
 @NgModule({
   declarations: [
     MyApp,
@@ -32,7 +34,7 @@ import { MbscModule } from '@mobiscroll/angular';
     ReactiveFormsModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
   ],
   bootstrap: [IonicApp],
   entryComponents: [

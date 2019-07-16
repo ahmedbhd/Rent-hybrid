@@ -5,6 +5,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import {timer} from "rxjs/observable/timer";
 
 import { TabsPage } from '../pages/tabs/tabs';
+import * as firebase from 'firebase';
+import { FIREBASE_CONFIG} from "./environment";
 
 @Component({
   templateUrl: 'app.html'
@@ -21,5 +23,6 @@ export class MyApp {
       splashScreen.hide();
       timer(3000).subscribe(() => this.showSplash = false);
     });
+    firebase.initializeApp(FIREBASE_CONFIG);
   }
 }

@@ -14,7 +14,7 @@
     "@angular/animations": "5.2.11",
     "@angular/common": "5.2.11",
     "@angular/compiler": "5.2.11",
-    "@angular/compiler-cli": "5.2.11",
+    "@angular/compiler-cli": "^8.1.1",
     "@angular/core": "5.2.11",
     "@angular/forms": "5.2.11",
     "@angular/http": "5.2.11",
@@ -28,13 +28,16 @@
     "@mobiscroll/cli": "^1.0.0",
     "cordova-android": "^7.1.4",
     "cordova-plugin-device": "^2.0.2",
+    "cordova-plugin-firebase": "2.0.5",
     "cordova-plugin-ionic-keyboard": "^2.1.3",
     "cordova-plugin-ionic-webview": "^4.1.1",
     "cordova-plugin-splashscreen": "^5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "cordova-plugin-whitelist": "^1.3.3",
+    "firebase": "^5.8.2",
     "ionic-angular": "3.9.5",
     "ionicons": "3.0.0",
+    "promise-polyfill": "^8.1.3",
     "rxjs": "5.5.11",
     "sw-toolbox": "3.6.0",
     "zone.js": "0.8.29"
@@ -57,7 +60,8 @@
       "cordova-plugin-ionic-webview": {
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-firebase": {}
     },
     "platforms": [
       "android"

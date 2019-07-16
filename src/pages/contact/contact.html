@@ -7,11 +7,18 @@
 </ion-header>
 
 <ion-content>
+  <ion-input [(ngModel)]="inputName" placeholder="Item name"> </ion-input>
+  <ion-input [(ngModel)]="inputCin" placeholder="Item cin" type="number"> </ion-input>
+
+  <button ion-button full (click)="addItem({name:inputName , cin:inputCin})">Add</button>
   <ion-list>
-    <ion-list-header>Follow us on Twitter</ion-list-header>
-    <ion-item>
-      <ion-icon name="ionic" item-start></ion-icon>
-      @ionicframework
+    <ion-item *ngFor="let item of locations">
+      {{item.name}} & {{item.cin}}
     </ion-item>
   </ion-list>
-</ion-content>
+  <ion-list>
+    <ion-item *ngFor="let item of payments">
+      {{item.cin}} & {{item.value}}
+    </ion-item>
+  </ion-list>
+ </ion-content>

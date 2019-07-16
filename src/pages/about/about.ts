@@ -1,18 +1,9 @@
 import { Component } from '@angular/core';
-import { ViewChild, OnInit } from '@angular/core';
-import { mobiscroll, MbscEventcalendarOptions, MbscRangeOptions, MbscFormOptions, MbscPopupOptions, MbscColorOptions, MbscEventcalendar, MbscPopup } from '@mobiscroll/angular';
-import { HttpClient } from '@angular/common/http';
-
-mobiscroll.settings = {
-  lang: 'ar',
-  theme: 'material'
-};
-
-let preventSet,
-  eventToEdit;
+import { NavController } from 'ionic-angular';
 
 @Component({
   selector: 'page-about',
+<<<<<<< Updated upstream
   templateUrl: './about.html'
 })
 export class AboutPage implements OnInit {
@@ -103,63 +94,14 @@ export class AboutPage implements OnInit {
       this.saveChanges();
     }
   };
+=======
+  templateUrl: 'about.html'
+})
+export class AboutPage {
+>>>>>>> Stashed changes
 
-  navigate(inst, val) {
-    if (inst) {
-      inst.navigate(val);
-    }
+  constructor(public navCtrl: NavController) {
+
   }
 
-  change() {
-    this.controlType = this.allDay ? ['date'] : ['date', 'time'];
-    this.wheelType = this.allDay ? 'MM dd yy' : '|D M d|';
-  }
-
-  saveChanges() {
-    const eventToSave = {
-        id: eventToEdit.id,
-        text: this.eventText + this.btn,
-        desc: this.eventDesc,
-        color: this.eventColor,
-        allDay: this.allDay,
-        start: this.eventStart,
-        end: this.eventEnd,
-        free: this.isFree === 'free'
-      },
-      index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
-
-    this.events[index] = eventToSave;
-  }
-
-  updatePopup() {
-    const event = eventToEdit,
-      free = event.free ? 'free' : 'busy',
-      oneDay = 1000 * 60 * 60 * 24,
-      diff = new Date(event.end).getTime() - new Date(event.start).getTime(),
-      days = Math.round(Math.abs(diff) / oneDay),
-      allDay = event.allDay || days > 0;
-
-    this.eventText = event.text.replace(this.btn, '') || '';
-    this.eventDesc = event.desc || '';
-    this.allDay = allDay;
-
-    setTimeout(() => {
-      this.eventStart = event.start;
-      this.eventEnd = event.end;
-    });
-
-    this.isFree = free;
-    this.eventColor = event.color;
-
-    this.change();
-  }
-
-  ngOnInit() {
-    this.http.jsonp('https://trial.mobiscroll.com/events-update/', 'callback').subscribe((resp: any) => {
-      for (let i = 0; i < resp.length; ++i) {
-        resp[i].text += this.btn;
-      }
-      this.events = resp;
-    });
-  }
 }
