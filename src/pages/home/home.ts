@@ -31,6 +31,9 @@ const now = new Date();
   templateUrl: './home.html'
 })
 export class HomePage {
+
+
+  id:number=1;
   refLocation = firebase.database().ref('location/');
   refPayment = firebase.database().ref('payment/');
 
@@ -81,10 +84,10 @@ export class HomePage {
     ],
     headerText: 'Ajouter Location',
     onSet: (event, inst) => {
-      let id = 5;
+      this.id = this.id+1;
 
       let entity = {
-        id: id,
+        id: this.id,
         start: this.eventDate[0].getTime(),
         end: this.eventDate[1].getTime(),
         color: this.eventColor,
@@ -100,7 +103,7 @@ export class HomePage {
       console.log(entity);
 
       let paymentEntity = {
-        id:id,
+        id:this.id,
         type: this.paymentType,
         amount: this.eventAmount,
         date: new Date().getTime()
@@ -111,7 +114,7 @@ export class HomePage {
       newPayment.set(paymentEntity);
 
       this.events.push({
-        id: id,
+        id: this.id,
         start: this.eventDate[0],
         end: this.eventDate[1],
         color: this.eventColor,
@@ -122,7 +125,7 @@ export class HomePage {
       });
       this.eventText = '';
       this.eventDesc = '';
-      id += 1;
+     // id += 1;
       // Navigate the calendar to the new event's start date
       this.cal.instance.navigate(this.eventDate[0], true);
 
@@ -282,6 +285,7 @@ export class HomePage {
         let day;
         let startDay = new Date(resp[i].start);
         let endDay = new Date(resp[i].end);
+        this.id = resp[i].id;
         for (day = startDay; day <= endDay; day += 86400000) {
           let loopDay=new Date(day);
           this.markedDays.push({d: loopDay,color: resp[i].color})
