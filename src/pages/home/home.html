@@ -1,26 +1,35 @@
-<ion-content>
-  <ion-fab right bottom>
-    <button color="dark" icon-only ion-fab (click)="mbscPopup.instance.show()"><i class="fas fa-plus-circle"></i></button>
-  </ion-fab>
-  <mbsc-eventcalendar [data]="events" [options]="eventSettings" (onEventSelect)="eventClick($event)"></mbsc-eventcalendar>
+<mbsc-form>
+  <div class="mbsc-grid md-view-update-demo">
+    <div class="mbsc-row mbsc-no-padding">
+      <div class="mbsc-col-md-8 mbsc-col-12">
+        <div id="demo-view-update-event"></div>
+        <mbsc-eventcalendar [data]="events" [options]="calSettings" #mbscCal="mobiscroll"
+                            [marked]="markedDays"></mbsc-eventcalendar>
+      </div>
+      <div class="mbsc-col-md-4 mbsc-col-12 md-col-right">
+        <mbsc-eventcalendar [data]="events" [options]="listSettings" #mbscList="mobiscroll"></mbsc-eventcalendar>
+      </div>
+    </div>
+  </div>
+</mbsc-form>
 
-  <mbsc-popup [options]="popupSettings" #mbscPopup="mobiscroll" class="md-add-event-popup">
-    <mbsc-form>
-      <mbsc-form-group>
-        <mbsc-input [(ngModel)]="eventText">Titre</mbsc-input>
-        <mbsc-textarea [(ngModel)]="eventDesc">Description</mbsc-textarea>
-      </mbsc-form-group>
-      <mbsc-form-group>
-        <mbsc-switch [(ngModel)]="allDay" (change)="change()">Toute La Journée</mbsc-switch>
-        <mbsc-range [(ngModel)]="eventDate" [options]="rangeSettings" [controls]="control" [dateWheels]="wheels">
-          <mbsc-range-start>Debut</mbsc-range-start>
-          <mbsc-range-end>Fin</mbsc-range-end>
-        </mbsc-range>
-        <mbsc-segmented-group name="my-group" [(ngModel)]="isFree">
-          <mbsc-segmented value="busy">Occupé</mbsc-segmented>
-          <mbsc-segmented value="free">Libre</mbsc-segmented>
-        </mbsc-segmented-group>
-      </mbsc-form-group>
-    </mbsc-form>
-  </mbsc-popup>
-</ion-content>
+<mbsc-popup [options]="popupSettings" #mbscPopup="mobiscroll" class="md-view-update-popup">
+  <mbsc-form>
+    <mbsc-form-group>
+      <mbsc-input [(ngModel)]="eventText">Title</mbsc-input>
+      <mbsc-textarea [(ngModel)]="eventDesc">Description</mbsc-textarea>
+    </mbsc-form-group>
+    <mbsc-form-group>
+      <mbsc-switch [(ngModel)]="allDay" (change)="change()">All-day</mbsc-switch>
+      <mbsc-range [options]="rangeSettings" [controls]="controlType" [dateWheels]="wheelType">
+        <mbsc-range-start [(ngModel)]="eventStart">Starts</mbsc-range-start>
+        <mbsc-range-end [(ngModel)]="eventEnd">Ends</mbsc-range-end>
+      </mbsc-range>
+      <mbsc-segmented-group name="free" [(ngModel)]="isFree">
+        <mbsc-segmented value="busy">Show as busy</mbsc-segmented>
+        <mbsc-segmented value="free">Show as free</mbsc-segmented>
+      </mbsc-segmented-group>
+      <mbsc-color [(ngModel)]="eventColor" [options]="colorSettings"></mbsc-color>
+    </mbsc-form-group>
+  </mbsc-form>
+</mbsc-popup>
