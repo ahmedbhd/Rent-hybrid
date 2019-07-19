@@ -16,6 +16,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MbscModule} from "@mobiscroll/angular";
 
 import {CallNumber} from "@ionic-native/call-number";
+import {LocationDetailPage} from "../pages/location-detail/location-detail";
 
 
 @NgModule({
@@ -24,7 +25,8 @@ import {CallNumber} from "@ionic-native/call-number";
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    LocationDetailPage
   ],
   imports: [ 
     FormsModule,  
@@ -42,7 +44,8 @@ import {CallNumber} from "@ionic-native/call-number";
     AboutPage,
     ContactPage,
     HomePage,
-    TabsPage
+    TabsPage,
+    LocationDetailPage
   ],
   providers: [
     StatusBar,

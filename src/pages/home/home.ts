@@ -242,7 +242,7 @@ export class HomePage {
     this.key = event.key;
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
     let loading = this.loadingCtrl.create({
       content: 'Please wait...',
       showBackdrop: true

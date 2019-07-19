@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import {LoadingController, NavController, ToastController} from 'ionic-angular';
+import {LoadingController, Modal, ModalController, NavController, ToastController} from 'ionic-angular';
 import {HttpClient} from "@angular/common/http";
 import * as firebase from 'firebase';
 import { snapshotToArray} from "../../app/environment";
 import {mobiscroll} from "@mobiscroll/angular";
 import {CallNumber} from "@ionic-native/call-number";
+import {LocationDetailPage} from "../location-detail/location-detail";
 
 
 @Component({
@@ -12,13 +13,15 @@ import {CallNumber} from "@ionic-native/call-number";
   templateUrl: './about.html'
 })
 export class AboutPage {
+  public myModal: Modal;
 
   locations =[];
   refLocation = firebase.database().ref('location/');
   constructor(private http: HttpClient,
               private callNumber: CallNumber ,
               private loadingCtrl: LoadingController ,
-              private toastCtrl: ToastController){}
+              private toastCtrl: ToastController,
+              private modal: ModalController){}
 
 
   ionViewDidEnter(){
@@ -53,6 +56,14 @@ export class AboutPage {
 
   openDetail(item: any) {
     console.log(item);
+    this.myModal = this.modal.create(LocationDetailPage, {data: item.key});
+    this.myModal.present();
+    this.myModal.onDidDismiss(data => {
+      if (data != null) {
+        console.log(data);
+        this.presentToast("We thank you for trusting us");
+      }
+    })
   }
   async presentToast(msg: string) {
     const toast = await this.toastCtrl.create({
