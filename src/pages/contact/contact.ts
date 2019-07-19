@@ -30,7 +30,8 @@ export class ContactPage {
   constructor(public navCtrl: NavController) {
   }
 
-  ionViewDidLoad() {
+  ionViewDidEnter() {
+    console.log('enter');
     for (let i = 0; i < 12; i++) {
       this.barChartValues[i] = 0;
       this.lineChartValues[i] = 0;

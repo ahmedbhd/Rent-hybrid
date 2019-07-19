@@ -1,3 +1,11 @@
 page-contact {
+  .row {
+    display: flex;
+    flex-direction: row;
+    height: 80%;
+  }
 
+  .chart {
+    flex: 1;
+  }
 }
