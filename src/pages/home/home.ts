@@ -217,7 +217,6 @@ export class HomePage {
       tel: this.eventDesc,
       cin: this.eventText
     };
-    //, index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
     let entityToSave = {
       id: eventToEdit.id,
       text: this.eventName,
@@ -227,13 +226,8 @@ export class HomePage {
       tel: this.eventDesc,
       cin: this.eventText
     };
-
-    console.log('entityToSave');
-    console.log(entityToSave);
     let adaNameRef = firebase.database().ref(`location/${this.key}`);
     adaNameRef.update(entityToSave);
-
-    //this.events[index] = eventToSave;
   }
 
   updatePopup() {
