@@ -14,6 +14,8 @@ import {HttpClient} from '@angular/common/http';
 import * as firebase from 'firebase';
 import {snapshotToArray} from "../../app/environment";
 import {CallNumber} from '@ionic-native/call-number';
+import {LoadingController} from "ionic-angular";
+import {error} from "@angular/compiler-cli/src/transformers/util";
 
 
 mobiscroll.settings = {
@@ -28,8 +30,7 @@ const now = new Date();
 
 @Component({
   selector: 'page-home',
-  templateUrl: './home.html',
-  providers: [CallNumber]
+  templateUrl: './home.html'
 })
 export class HomePage {
 
@@ -197,7 +198,7 @@ export class HomePage {
   };
   key: string;
 
-  constructor(private http: HttpClient, private callNumber: CallNumber) {
+  constructor(private http: HttpClient, private callNumber: CallNumber , private loadingCtrl: LoadingController) {
 
   }
 
@@ -242,6 +243,12 @@ export class HomePage {
   }
 
   ionViewDidLoad() {
+    let loading = this.loadingCtrl.create({
+      content: 'Please wait...',
+      showBackdrop: true
+    });
+    loading.present();
+
     this.refLocation.on('value', (resp: any) => {
       this.markedDays = [];
       this.events = [];
@@ -259,7 +266,8 @@ export class HomePage {
           this.markedDays.push({d: loopDay, color: location.color})
         }
       });
-    });
+      loading.dismiss();
+    },error =>  loading.dismiss());
   }
 
   resetFields() {

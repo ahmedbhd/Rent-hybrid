@@ -14,6 +14,10 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import {MbscModule} from "@mobiscroll/angular";
+
+import {CallNumber} from "@ionic-native/call-number";
+
+
 @NgModule({
   declarations: [
     MyApp,
@@ -43,6 +47,8 @@ import {MbscModule} from "@mobiscroll/angular";
   providers: [
     StatusBar,
     SplashScreen,
+    CallNumber,
+
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

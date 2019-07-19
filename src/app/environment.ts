@@ -19,6 +19,7 @@ export const FIREBASE_CONFIG = {
   appId: "1:317894044451:web:cdcaa7ff7cabe3b9"
 };
 
+// @ts-ignore
 export const snapshotToArray = snapshot => {
   let returnArray =[];
   snapshot.forEach( element => {

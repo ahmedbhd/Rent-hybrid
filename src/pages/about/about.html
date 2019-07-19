@@ -1,11 +1,40 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      About
+      Locations
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+  <ion-list>
+    <ion-item-sliding *ngFor="let item of locations">
+        <div ion-item (click)="openDetail(item)">
+          <ion-grid item-content>
+          <ion-row item-content>
+            <ion-label  [ngStyle]="{'color': item.color}" item-left>{{item.text}}</ion-label>
+            <ion-badge item-right [ngClass]="'badge-' + item.color">{{item.cin}} </ion-badge>
+          </ion-row>
+          <ion-row item-content>
+              <ion-label item-left style="color: #4EF375; font-size: 15px">
+                <ion-icon><i class="fas fa-hourglass-start"></i></ion-icon>
+                {{item.start | date : 'short' }}
+              </ion-label>
+               <ion-label item-right style="color: #FA8A8A; text-align: right ;font-size: 15px">
+                 {{item.end | date : 'short' :'fr'}}
+                 <ion-icon><i class="fas fa-hourglass-end"></i></ion-icon>
+               </ion-label>
+          </ion-row>
+          </ion-grid>
+        </div>
 
+      <ion-item-options side="left">
+        <button ion-button icon-only color="secondary" (click)="call(item.tel)"><ion-icon name="call"></ion-icon></button>
+      </ion-item-options>
+
+      <ion-item-options side="right">
+        <button ion-button icon-only color="danger" (click)="delete(item.key)"><ion-icon name="trash"></ion-icon></button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
 </ion-content>
