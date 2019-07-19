@@ -13,10 +13,7 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 
 import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MbscModule } from '@mobiscroll/angular';
-
-
-
+import {MbscModule} from "@mobiscroll/angular";
 @NgModule({
   declarations: [
     MyApp,
@@ -27,7 +24,6 @@ import { MbscModule } from '@mobiscroll/angular';
   ],
   imports: [ 
     FormsModule,  
-    MbscModule, 
     BrowserModule,
     MbscModule,
     FormsModule,

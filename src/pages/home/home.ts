@@ -1,19 +1,19 @@
-import { Component } from '@angular/core';
-import { ViewChild, OnInit } from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {
-  mobiscroll,
-  MbscEventcalendarOptions,
-  MbscRangeOptions,
-  MbscPopupOptions,
   MbscColorOptions,
   MbscEventcalendar,
+  MbscEventcalendarOptions,
+  MbscNumpadDecimalOptions,
   MbscPopup,
-  MbscNumberOptions, MbscNumpadDecimalOptions, MbscNumpadOptions
+  MbscPopupOptions,
+  MbscRangeOptions,
+  mobiscroll
 } from '@mobiscroll/angular';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 
 import * as firebase from 'firebase';
-import { snapshotToArray} from "../../app/environment";
+import {snapshotToArray} from "../../app/environment";
+import {CallNumber} from '@ionic-native/call-number';
 
 
 mobiscroll.settings = {
@@ -28,119 +28,41 @@ const now = new Date();
 
 @Component({
   selector: 'page-home',
-  templateUrl: './home.html'
+  templateUrl: './home.html',
+  providers: [CallNumber]
 })
 export class HomePage {
 
 
-  id:number=1;
+  id: number = 1;
   refLocation = firebase.database().ref('location/');
   refPayment = firebase.database().ref('payment/');
-
-
-  constructor(private http: HttpClient) {
-
-  }
-
-  events: Array < any > ;
+  events = [];
   eventText: string;
   eventDesc: string;
   eventAmount: number = 0;
-
   numpadSettings: MbscNumpadDecimalOptions = {
     theme: 'material',
     lang: 'fr',
     scale: 0,
     max: 9999
   };
-
   // allDay: boolean;
   eventStart: Date;
   eventEnd: Date;
   eventColor: string;
   btn = '<button class="mbsc-btn mbsc-btn-primary md-edit-btn">Modifier</button>';
-  controlType: Array < string > = ['date', 'time'] ;
+  controlType: Array<string> = ['date', 'time'];
   wheelType: string = '|D M d|';
-
   @ViewChild('mbscCal')
   cal: MbscEventcalendar;
-
   @ViewChild('mbscList')
   list: MbscEventcalendar;
-
   @ViewChild('mbscPopup')
   popup: MbscPopup;
-
-  eventDate = [now, new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours() + 2)];
-
-  addPopupSettings: MbscPopupOptions = {
-    display: 'center',
-    cssClass: 'mbsc-no-padding',
-    buttons: [{
-      text: 'Ajouter',
-      handler: 'set'
-    },
-      'cancel'
-    ],
-    headerText: 'Ajouter Location',
-    onSet: (event, inst) => {
-      this.id = this.id+1;
-
-      let entity = {
-        id: this.id,
-        start: this.eventDate[0].getTime(),
-        end: this.eventDate[1].getTime(),
-        color: this.eventColor,
-        cin: this.eventText,
-        tel: this.eventDesc,
-        name: this.eventName,
-      };
-        let newLocation = this.refLocation.push();
-        newLocation.set(entity);
-
-
-      console.log('entityLoan');
-      console.log(entity);
-
-      let paymentEntity = {
-        id:this.id,
-        type: this.paymentType,
-        amount: this.eventAmount,
-        date: new Date().getTime()
-      };
-      console.log('entityPayment');
-      console.log(paymentEntity);
-      let newPayment = this.refPayment.push();
-      newPayment.set(paymentEntity);
-
-      this.events.push({
-        id: this.id,
-        start: this.eventDate[0],
-        end: this.eventDate[1],
-        color: this.eventColor,
-        text: (this.eventText || 'Nouvelle location') + this.btn,
-        title: this.eventText || 'Nouvelle location',
-        description: this.eventDesc,
-        name: this.eventName,
-      });
-      this.eventText = '';
-      this.eventDesc = '';
-     // id += 1;
-      // Navigate the calendar to the new event's start date
-      this.cal.instance.navigate(this.eventDate[0], true);
-
-      let day;
-      let startDay = this.eventDate[0].getTime();
-      let endDay = this.eventDate[1].getTime();
-      for (day = startDay; day <= endDay; day += 86400000) {
-        let loopDay=new Date(day);
-        this.markedDays.push({d: loopDay,color: this.eventColor})
-      }
-
-
-    }
-  };
-
+  @ViewChild('viewmbscPopup')
+  viewPopup: MbscPopup;
+  eventDate = [now, new Date(now.getTime() + 86400000)];
   rangeSettings: MbscRangeOptions = {
     controls: ['date', 'time'],
     dateWheels: '|D M d|',
@@ -151,11 +73,60 @@ export class HomePage {
       }
     }
   };
+  calSettings: MbscEventcalendarOptions = {
+    display: 'inline',
+    view: {
+      calendar: {type: 'month'}
+    },
+    onSetDate: (event, inst) => {
+      if (!preventSet) {
+        const day = event.date;
+        this.navigate(this.list.instance, day);
+      }
+      preventSet = false;
+    }
+  };
+  colorSettings: MbscColorOptions = {
+    display: 'inline',
+    clear: false,
+    data: ['#fff568', '#ffc400', '#ff5252', '#f48fb1', '#ba68c8', '#8c9eff', '#90caf9', '#9ccc65', '#0db057', '#bcaaa4']
+  };
+  popupSettings: MbscPopupOptions = {
+    display: 'center',
+    buttons: [
+      'cancel',
+      {
+        text: 'Enregistrer',
+        handler: 'set'
+      }
+    ],
+    headerText: 'Modifier Location',
+    onSet: (event, inst) => {
+      this.saveChanges();
+    }
+  };
+  viewpopupSettings: MbscPopupOptions = {
+    display: 'center',
+    buttons: [
+      'cancel',
+      {
+        text: 'Paiements',
+        handler: 'set'
+      }
+    ],
+    headerText: 'Informations',
+    onSet: (event, inst) => {
 
+    }
+  };
+  eventToBeEdited: any;
+  markedDays = [];
+  paymentType: string = 'avance';
+  eventName: string;
   listSettings: MbscEventcalendarOptions = {
     display: 'inline',
     view: {
-      eventList: { type: 'day' }
+      eventList: {type: 'day'}
     },
     onPageChange: (event, inst) => {
       const day = event.firstDay;
@@ -168,44 +139,67 @@ export class HomePage {
         this.eventToBeEdited = event.event;
         this.updatePopup();
         this.popup.instance.show();
+      } else {
+        this.eventName = event.event.text.substring(0, event.event.text.indexOf('<button')) || '';
+        this.eventText = event.event.cin || '';
+        this.eventDesc = event.event.tel || '';
+        this.eventStart = event.event.start;
+        this.eventEnd = event.event.end;
+        this.viewPopup.instance.show();
       }
     }
   };
-
-  calSettings: MbscEventcalendarOptions = {
-    display: 'inline',
-    view: {
-      calendar: { type: 'month' }
-    },
-    onSetDate: (event, inst) => {
-      if (!preventSet) {
-        const day = event.date;
-        this.navigate(this.list.instance, day);
-      }
-      preventSet = false;
-    }
-  };
-
-  colorSettings: MbscColorOptions = {
-    display: 'inline',
-    clear: false,
-    data: ['#fff568', '#ffc400', '#ff5252', '#f48fb1', '#ba68c8', '#8c9eff', '#90caf9', '#9ccc65', '#0db057', '#bcaaa4']
-  };
-
-  popupSettings: MbscPopupOptions = {
+  addPopupSettings: MbscPopupOptions = {
     display: 'center',
-    buttons: [
-      'cancel',
-      {
-        text: 'Save',
-        handler: 'set'
-      }
+    cssClass: 'mbsc-no-padding',
+    buttons: [{
+      text: 'Ajouter',
+      handler: 'set'
+    },
+      'cancel'
     ],
-    headerText: 'Edit event',
+    headerText: 'Ajouter Location',
     onSet: (event, inst) => {
-      this.saveChanges();
+      this.id = this.id + 1;
+
+      let entity = {
+        id: this.id,
+        start: this.eventDate[0].getTime(),
+        end: this.eventDate[1].getTime(),
+        color: this.eventColor,
+        cin: this.eventText,
+        tel: this.eventDesc,
+        text: this.eventName,
+      };
+      let newLocation = this.refLocation.push();
+      newLocation.set(entity);
+      mobiscroll.snackbar({
+        message: 'Location Enregistrée.',
+        color: 'success'
+      });
+      let locationKey;
+      this.events.forEach((location) => {
+        location.id == this.id ? locationKey = location.key : null;
+      });
+      let paymentEntity = {
+        id: this.id,
+        type: this.paymentType,
+        amount: this.eventAmount,
+        date: new Date().getTime(),
+        locationKey: locationKey
+      };
+      let newPayment = this.refPayment.push();
+      newPayment.set(paymentEntity);
+      this.resetFields();
+      this.cal.instance.navigate(this.eventDate[0], true);
+      this.eventDate = [now, new Date(now.getTime() + 86400000)];
     }
   };
+  key: string;
+
+  constructor(private http: HttpClient, private callNumber: CallNumber) {
+
+  }
 
   navigate(inst, val) {
     if (inst) {
@@ -213,91 +207,86 @@ export class HomePage {
     }
   }
 
-  // change() {
-    // this.controlType = this.allDay ? ['date'] : ['date', 'time'];
-    // this.wheelType = this.allDay ? 'MM dd yy' : '|D M d|';
-  // }
-
-  eventToBeEdited: any;
-
   saveChanges() {
     const eventToSave = {
-        id: eventToEdit.id,
-        text: this.eventText + this.btn,
-        desc: this.eventDesc,
-        color: this.eventColor,
-        start: this.eventStart,
-        end: this.eventEnd,
-      },
-      index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
-    this.events[index] = eventToSave;
-    let startDate = new Date(this.eventToBeEdited.start).getTime();
-    let startDate2 = eventToSave.start.getTime();
-    let endDate = new Date(this.eventToBeEdited.end).getTime();
-    let endDate2 = eventToSave.end.getTime();
-    let datetime;
-    for (datetime = startDate; datetime <= endDate; datetime += 86400000) {
-      let loopDay = new Date(datetime).getDate();
-      this.markedDays.forEach((markedDay) => {
-        if(markedDay.d.getDate() == loopDay
-          && markedDay.d.getMonth() == new Date(datetime).getMonth()
-          && markedDay.d.getFullYear() == new Date(datetime).getFullYear()
-          && markedDay.color == this.eventToBeEdited.color) {
-          console.log(markedDay.d);
-          this.markedDays.splice(this.markedDays.indexOf(markedDay),1);
-        }
-      });
-    }
-    console.log('daysToColor');
-    for (let datetime2 = startDate2; datetime2 <= endDate2; datetime2 += 86400000) {
-      console.log(new Date(datetime2));
-      this.markedDays.push({d: new Date(datetime2), color: eventToSave.color})
-    }
+      id: eventToEdit.id,
+      text: this.eventName + this.btn,
+      color: this.eventColor,
+      start: this.eventStart,
+      end: this.eventEnd,
+      tel: this.eventDesc,
+      cin: this.eventText
+    };
+    //, index = this.events.indexOf(this.events.filter(x => x.id === eventToEdit.id)[0]);
+    let entityToSave = {
+      id: eventToEdit.id,
+      text: this.eventName,
+      color: this.eventColor,
+      start: this.eventStart.getTime(),
+      end: this.eventEnd.getTime(),
+      tel: this.eventDesc,
+      cin: this.eventText
+    };
+
+    console.log('entityToSave');
+    console.log(entityToSave);
+    let adaNameRef = firebase.database().ref(`location/${this.key}`);
+    adaNameRef.update(entityToSave);
+
+    //this.events[index] = eventToSave;
   }
 
   updatePopup() {
-    const event = eventToEdit,
-      free = event.free ? 'free' : 'busy',
-      oneDay = 1000 * 60 * 60 * 24,
-      diff = new Date(event.end).getTime() - new Date(event.start).getTime(),
-      days = Math.round(Math.abs(diff) / oneDay);
-      // allDay = event.allDay || days > 0;
-
-    this.eventText = event.name.replace(this.btn, '') || '';
-    this.eventDesc = event.cin || '';
-    // this.allDay = allDay;
-
-    setTimeout(() => {
-      this.eventStart = event.start;
-      this.eventEnd = event.end;
-    });
-
+    const event = eventToEdit;
+    this.eventName = event.text.substring(0, event.text.indexOf('<button')) || '';
+    this.eventText = event.cin || '';
+    this.eventDesc = event.tel || '';
+    this.eventStart = event.start;
+    this.eventEnd = event.end;
     this.eventColor = event.color;
-
-    // this.change();
+    this.key = event.key;
   }
 
   ionViewDidLoad() {
-    this.refLocation.on('value', (resp:any) => {
-      resp  = snapshotToArray(resp);
+    this.refLocation.on('value', (resp: any) => {
+      this.markedDays = [];
+      this.events = [];
+      resp = snapshotToArray(resp);
       for (let i = 0; i < resp.length; ++i) {
-        resp[i].name += this.btn;
-        let day;
-        let startDay = new Date(resp[i].start);
-        let endDay = new Date(resp[i].end);
-        this.id = resp[i].id;
-        for (day = startDay; day <= endDay; day += 86400000) {
-          let loopDay=new Date(day);
-          this.markedDays.push({d: loopDay,color: resp[i].color})
-        }
-        console.log(resp[i])
+        resp[i].text += this.btn;
       }
       this.events = resp;
+      this.events.forEach((location) => {
+        location.start = new Date(location.start);
+        location.end = new Date(location.end);
+        let day;
+        for (day = location.start.getTime(); day <= location.end.getTime(); day += 86400000) {
+          let loopDay = new Date(day);
+          this.markedDays.push({d: loopDay, color: location.color})
+        }
+      });
     });
   }
 
+  resetFields() {
+    this.eventText = '';
+    this.eventDesc = '';
+    this.eventName = '';
+    this.eventColor = '';
+    this.key = '';
+    this.eventAmount = 0;
+  }
 
-  markedDays: Array < any > = [];
-  paymentType: string = 'avance';
-  eventName: string;
+  call(phone: string) {
+    if (phone.length == 8) {
+      this.callNumber.callNumber(phone, true)
+        .then(res => console.log('Launched dialer!', res))
+        .catch(err => console.log('Error launching dialer', err));
+    } else {
+      mobiscroll.snackbar({
+        message: 'Numéro de téléphone est Invalid.',
+        color: 'danger'
+      });
+    }
+  }
 }

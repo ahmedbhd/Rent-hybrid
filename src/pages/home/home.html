@@ -8,7 +8,7 @@
       </div>
       <div class="mbsc-col-md-12 mbsc-col-12 md-col-center">
         <div class="mbsc-btn-group-block">
-          <mbsc-button color="info" (click)="mbscAddPopup.instance.show()">Ajouter Location</mbsc-button>
+          <mbsc-button (click)="mbscAddPopup.instance.show();resetFields()" color="info">Ajouter Location</mbsc-button>
         </div>
       </div>
       <div class="mbsc-col-md-4 mbsc-col-12 md-col-right">
@@ -30,10 +30,6 @@
         <mbsc-range-start [(ngModel)]="eventStart">Début</mbsc-range-start>
         <mbsc-range-end [(ngModel)]="eventEnd">Fin</mbsc-range-end>
       </mbsc-range>
-      <mbsc-segmented-group name="edit-group" [(ngModel)]="paymentType">
-        <mbsc-segmented value="avance">Avance</mbsc-segmented>
-        <mbsc-segmented value="complet">Paiement Complet</mbsc-segmented>
-      </mbsc-segmented-group>
       <mbsc-color [(ngModel)]="eventColor" [options]="colorSettings"></mbsc-color>
     </mbsc-form-group>
   </mbsc-form>
@@ -41,7 +37,7 @@
 
 <!--Add Popup-->
 
-<mbsc-popup [options]="addPopupSettings" #mbscAddPopup="mobiscroll" class="md-add-event-popup">
+<mbsc-popup #mbscAddPopup="mobiscroll" [options]="addPopupSettings" class="md-add-event-popup">
   <mbsc-form>
     <mbsc-form-group>
       <mbsc-input [(ngModel)]="eventName">Nom</mbsc-input>
@@ -49,16 +45,40 @@
       <mbsc-textarea [(ngModel)]="eventDesc">Tel</mbsc-textarea>
     </mbsc-form-group>
     <mbsc-form-group>
-      <mbsc-range [(ngModel)]="eventDate" [options]="rangeSettings" [controls]="controlType" [dateWheels]="wheelType">
+      <mbsc-range [(ngModel)]="eventDate" [controls]="controlType" [dateWheels]="wheelType" [options]="rangeSettings">
         <mbsc-range-start>Début</mbsc-range-start>
         <mbsc-range-end>Fin</mbsc-range-end>
       </mbsc-range>
-      <mbsc-segmented-group name="add-group" [(ngModel)]="paymentType">
+      <mbsc-segmented-group [(ngModel)]="paymentType" name="add-group">
         <mbsc-segmented value="avance">Avance</mbsc-segmented>
         <mbsc-segmented value="complet">Paiement Complet</mbsc-segmented>
       </mbsc-segmented-group>
-      <mbsc-numpad [(ngModel)]="eventAmount" mbsc-numpad-decimal [mbsc-options]="numpadSettings">Montant</mbsc-numpad>
+      <mbsc-numpad [(ngModel)]="eventAmount" [mbsc-options]="numpadSettings" mbsc-numpad-decimal>Montant</mbsc-numpad>
       <mbsc-color [(ngModel)]="eventColor" [options]="colorSettings"></mbsc-color>
+    </mbsc-form-group>
+  </mbsc-form>
+</mbsc-popup>
+
+<!--View PopUp-->
+
+<mbsc-popup #viewmbscPopup="mobiscroll" [options]="viewpopupSettings" class="md-view-update-popup">
+  <mbsc-form>
+    <mbsc-form-group>
+      <mbsc-input [(ngModel)]="eventName" readonly>Nom</mbsc-input>
+      <mbsc-input [value]="eventText" maxlength="8" readonly>CIN</mbsc-input>
+      <!--      <mbsc-input (click)="call(eventDesc)" [value]="eventDesc" readonly icon="phone" icon-align="right">Tel</mbsc-input>-->
+      <div class="mbsc-grid">
+        <div class="mbsc-row mbsc-justify-content-center">
+          <mbsc-button (click)="call(eventDesc)" class="mbsc-justify-content-center" color="success"
+                       icon="phone">{{eventDesc}}</mbsc-button>
+        </div>
+      </div>
+    </mbsc-form-group>
+    <mbsc-form-group>
+      <mbsc-range [controls]="controlType" [dateWheels]="wheelType" [options]="rangeSettings">
+        <mbsc-range-start [(ngModel)]="eventStart" disabled>Début</mbsc-range-start>
+        <mbsc-range-end [(ngModel)]="eventEnd" disabled>Fin</mbsc-range-end>
+      </mbsc-range>
     </mbsc-form-group>
   </mbsc-form>
 </mbsc-popup>
